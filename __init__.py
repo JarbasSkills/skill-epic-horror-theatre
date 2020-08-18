@@ -1,4 +1,4 @@
-from mycroft.skills.common_play_skill import CommonPlaySkill, CPSMatchLevel, CPSMatchType
+from mycroft.skills.common_play_skill import CommonPlaySkill, CPSMatchLevel
 import random
 import re
 from os.path import join, dirname
@@ -8,8 +8,6 @@ class EpicHorrorTheatreSkill(CommonPlaySkill):
 
     def __init__(self):
         super().__init__("Epic Horror Theatre")
-        self.supported_media = [CPSMatchType.GENERIC,
-                                CPSMatchType.AUDIOBOOK]
 
     def initialize(self):
         self.add_event('skill-epic-horror-theatre.jarbasskills.home',
@@ -47,16 +45,12 @@ class EpicHorrorTheatreSkill(CommonPlaySkill):
         phrase = phrase.strip()
         return phrase
 
-    def CPS_match_query_phrase(self, phrase, media_type):
+    def CPS_match_query_phrase(self, phrase):
         media_path = join(dirname(__file__), "media")
         original = phrase
         match = None
 
         score = 0
-
-        if media_type == CPSMatchType.AUDIOBOOK:
-            score += 0.1
-            match = CPSMatchLevel.GENERIC
 
         if self.voc_match(original, "atlanta"):
             score += 0.15
