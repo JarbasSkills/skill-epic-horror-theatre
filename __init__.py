@@ -19,7 +19,14 @@ class EpicHorrorTheatreSkill(CommonPlaySkill):
 
     # homescreen
     def handle_homescreen(self, message):
-        pass  # TODO selection menu
+        # TODO selection menu
+        media_path = join(dirname(__file__), "media")
+        url = join(media_path, random.choice(
+            ["At The Mountains of Madness.mp3",
+             "The Shadow Over Innsmouth.mp3",
+             "The Color Out of Space.mp3"
+             ]))
+        self.CPS_play(url)
 
     # common play
     def remove_voc(self, utt, voc_filename, lang=None):
@@ -42,6 +49,8 @@ class EpicHorrorTheatreSkill(CommonPlaySkill):
         phrase = self.remove_voc(phrase, "lovecraft")
         phrase = self.remove_voc(phrase, "atlanta")
         phrase = self.remove_voc(phrase, "epic_horror")
+        phrase = self.remove_voc(phrase, "audio_theatre")
+        phrase = self.remove_voc(phrase, "play")
         phrase = phrase.strip()
         return phrase
 
@@ -53,6 +62,10 @@ class EpicHorrorTheatreSkill(CommonPlaySkill):
         score = 0
 
         if self.voc_match(original, "atlanta"):
+            score += 0.15
+            match = CPSMatchLevel.CATEGORY
+
+        if self.voc_match(original, "audio_theatre"):
             score += 0.15
             match = CPSMatchLevel.CATEGORY
 
