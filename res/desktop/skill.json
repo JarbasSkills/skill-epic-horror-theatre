@@ -1,0 +1,24 @@
+{
+  "name": "Epic Horror Theatre Skill",
+  "skillname": "skill-epic-horror-theatre",
+  "authorname": "JarbasSkills",
+  "foldername": "",
+  "url": "https://github.com/JarbasSkills/skill-epic-horror-theatre",
+  "branch": "master",
+  "desktopFile": false,
+  "warning": "",
+  "systemDeps": false,
+  "platforms": [
+    "arm",
+    "arm64",
+    "i386",
+    "x86_64",
+    "ia64"
+  ],
+  "examples": [
+    "read the shadow over innsmouth",
+    "play innsmouth audiobook",
+    "read the color out of space",
+    "read lovecraft"
+  ]
+}
