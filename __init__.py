@@ -21,7 +21,14 @@ class EpicHorrorTheatreSkill(CommonPlaySkill):
 
     # homescreen
     def handle_homescreen(self, message):
-        pass  # TODO selection menu
+        # TODO selection menu
+        media_path = join(dirname(__file__), "media")
+        url = join(media_path, random.choice(
+            ["At The Mountains of Madness.mp3",
+             "The Shadow Over Innsmouth.mp3",
+             "The Color Out of Space.mp3"
+             ]))
+        self.CPS_play(url)
 
     # common play
     def remove_voc(self, utt, voc_filename, lang=None):
