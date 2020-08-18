@@ -44,6 +44,8 @@ class EpicHorrorTheatreSkill(CommonPlaySkill):
         phrase = self.remove_voc(phrase, "lovecraft")
         phrase = self.remove_voc(phrase, "atlanta")
         phrase = self.remove_voc(phrase, "epic_horror")
+        phrase = self.remove_voc(phrase, "audio_theatre")
+        phrase = self.remove_voc(phrase, "play")
         phrase = phrase.strip()
         return phrase
 
@@ -59,6 +61,10 @@ class EpicHorrorTheatreSkill(CommonPlaySkill):
             match = CPSMatchLevel.GENERIC
 
         if self.voc_match(original, "atlanta"):
+            score += 0.15
+            match = CPSMatchLevel.CATEGORY
+
+        if self.voc_match(original, "audio_theatre"):
             score += 0.15
             match = CPSMatchLevel.CATEGORY
 
