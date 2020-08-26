@@ -17,7 +17,7 @@ class EpicHorrorTheatreSkill(CommonPlaySkill):
 
     def get_intro_message(self):
         self.speak_dialog("intro")
-        self.gui.show_image(self.logo)
+        self.gui.show_image(join(dirname(__file__), "ui", "logo.png"))
 
     # homescreen
     def handle_homescreen(self, message):
