@@ -48,7 +48,6 @@ class EpicHorrorTheatreSkill(CommonPlaySkill):
 
     def clean_vocs(self, phrase):
         phrase = self.remove_voc(phrase, "reading")
-        phrase = self.remove_voc(phrase, "lovecraft")
         phrase = self.remove_voc(phrase, "atlanta")
         phrase = self.remove_voc(phrase, "epic_horror")
         phrase = self.remove_voc(phrase, "audio_theatre")
@@ -79,19 +78,22 @@ class EpicHorrorTheatreSkill(CommonPlaySkill):
             score += 0.15
             match = CPSMatchLevel.CATEGORY
 
-        if self.voc_match(original, "lovecraft"):
+        phrase = self.clean_vocs(phrase)
+
+        if self.voc_match(phrase, "lovecraft"):
             score += 0.5
             match = CPSMatchLevel.ARTIST
 
-        phrase = self.clean_vocs(phrase)
-
         if self.voc_match(phrase, "color_out_of_space"):
+            match = CPSMatchLevel.TITLE
             score += 0.7
             url = join(media_path, "The Color Out of Space.mp3")
         elif self.voc_match(phrase, "innsmouth"):
+            match = CPSMatchLevel.TITLE
             score += 0.7
             url = join(media_path, "The Shadow Over Innsmouth.mp3")
         elif self.voc_match(phrase, "mountains_of_madness"):
+            match = CPSMatchLevel.TITLE
             score += 0.7
             url = join(media_path, "At The Mountains of Madness.mp3")
         else:
@@ -101,12 +103,8 @@ class EpicHorrorTheatreSkill(CommonPlaySkill):
                  "The Color Out of Space.mp3"
                  ]))
 
-        if score >= 0.9:
+        if score >= 0.85:
             match = CPSMatchLevel.EXACT
-        elif score >= 0.7:
-            match = CPSMatchLevel.ARTIST
-        elif score >= 0.5:
-            match = CPSMatchLevel.CATEGORY
 
         if match is not None:
             return (phrase, match, {"stream": url})
