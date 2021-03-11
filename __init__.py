@@ -1,49 +1,38 @@
-from mycroft.skills.common_play_skill import CommonPlaySkill, CPSMatchLevel
-import random
-import re
+from ovos_utils.skills.templates.common_play import BetterCommonPlaySkill
+from ovos_utils.playback import CPSMatchType, CPSPlayback, CPSMatchConfidence
 from os.path import join, dirname
 
 
-class EpicHorrorTheatreSkill(CommonPlaySkill):
+class EpicHorrorTheatreSkill(BetterCommonPlaySkill):
 
     def __init__(self):
         super().__init__("Epic Horror Theatre")
-
-    def initialize(self):
-        self.add_event('skill-epic-horror-theatre.jarbasskills.home',
-                       self.handle_homescreen)
+        self.urls = {
+            "The Shadow Over Innsmouth": "https://github.com/JarbasSkills/skill-epic-horror-theatre/raw/media/media/The%20Shadow%20Over%20Innsmouth.mp3",
+            "The Color Out of Space": "https://github.com/JarbasSkills/skill-epic-horror-theatre/raw/media/media/The%20Color%20Out%20of%20Space.mp3",
+            "At The Mountains of Madness": "https://github.com/JarbasSkills/skill-epic-horror-theatre/raw/media/media/At%20The%20Mountains%20of%20Madness.mp3"
+        }
+        self.images = {
+            "The Shadow Over Innsmouth": join(dirname(__file__), "ui",
+                                              "innmouth.jpg"),
+            "The Color Out of Space": join(dirname(__file__), "ui",
+                                           "color.jpg"),
+            "At The Mountains of Madness": join(dirname(__file__), "ui",
+                                                "mountains.jpg")
+        }
+        self.supported_media = [CPSMatchType.GENERIC,
+                                CPSMatchType.AUDIO,
+                                CPSMatchType.AUDIOBOOK]
+        self.default_bg = join(dirname(__file__), "ui", "bg.jpg")
+        self.default_image = join(dirname(__file__), "ui", "logo.png")
+        self.skill_logo = join(dirname(__file__), "ui", "icon.png")
+        self.skill_icon = join(dirname(__file__), "ui", "icon.png")
 
     def get_intro_message(self):
         self.speak_dialog("intro")
         self.gui.show_image(self.logo)
 
-    # homescreen
-    def handle_homescreen(self, message):
-        # TODO selection menu
-        media_path = join(dirname(__file__), "media")
-        url = join(media_path, random.choice(
-            ["At The Mountains of Madness.mp3",
-             "The Shadow Over Innsmouth.mp3",
-             "The Color Out of Space.mp3"
-             ]))
-        self.CPS_play(url)
-
     # common play
-    def remove_voc(self, utt, voc_filename, lang=None):
-        lang = lang or self.lang
-        cache_key = lang + voc_filename
-
-        if cache_key not in self.voc_match_cache:
-            self.voc_match(utt, voc_filename, lang)
-
-        if utt:
-            # Check for matches against complete words
-            for i in self.voc_match_cache[cache_key]:
-                # Substitute only whole words matching the token
-                utt = re.sub(r'\b' + i + r"\b", "", utt)
-
-        return utt
-
     def clean_vocs(self, phrase):
         phrase = self.remove_voc(phrase, "reading")
         phrase = self.remove_voc(phrase, "lovecraft")
@@ -54,60 +43,73 @@ class EpicHorrorTheatreSkill(CommonPlaySkill):
         phrase = phrase.strip()
         return phrase
 
-    def CPS_match_query_phrase(self, phrase):
-        media_path = join(dirname(__file__), "media")
-        original = phrase
-        match = None
+    # better common play
+    def CPS_search(self, phrase, media_type):
+        """Analyze phrase to see if it is a play-able phrase with this skill.
 
+        Arguments:
+            phrase (str): User phrase uttered after "Play", e.g. "some music"
+            media_type (CPSMatchType): requested CPSMatchType to search for
+
+        Returns:
+            search_results (list): list of dictionaries with result entries
+            {
+                "match_confidence": CPSMatchConfidence.HIGH,
+                "media_type":  CPSMatchType.MUSIC,
+                "uri": "https://audioservice.or.gui.will.play.this",
+                "playback": CPSPlayback.GUI,
+                "image": "http://optional.audioservice.jpg",
+                "bg_image": "http://optional.audioservice.background.jpg"
+            }
+        """
+        original = phrase
         score = 0
 
         if self.voc_match(original, "atlanta"):
-            score += 0.15
-            match = CPSMatchLevel.CATEGORY
+            score += 15
 
         if self.voc_match(original, "audio_theatre"):
-            score += 0.15
-            match = CPSMatchLevel.CATEGORY
+            score += 35
 
-        if self.voc_match(original, "epic_horror"):
-            score += 0.15
-            match = CPSMatchLevel.CATEGORY
+        if self.voc_match(original, "horror"):
+            score += 15
+        elif self.voc_match(original, "epic_horror"):
+            score += 30
 
         if self.voc_match(original, "lovecraft"):
-            score += 0.5
-            match = CPSMatchLevel.ARTIST
+            score += 50
+
+        if media_type == CPSMatchType.AUDIOBOOK:
+            score += 15
 
         phrase = self.clean_vocs(phrase)
 
+        scores = {k: score for k, v in self.urls.items()}
         if self.voc_match(phrase, "color_out_of_space"):
-            score += 0.7
-            url = join(media_path, "The Color Out of Space.mp3")
-        elif self.voc_match(phrase, "innsmouth"):
-            score += 0.7
-            url = join(media_path, "The Shadow Over Innsmouth.mp3")
-        elif self.voc_match(phrase, "mountains_of_madness"):
-            score += 0.7
-            url = join(media_path, "At The Mountains of Madness.mp3")
-        else:
-            url = join(media_path, random.choice(
-                ["At The Mountains of Madness.mp3",
-                 "The Shadow Over Innsmouth.mp3",
-                 "The Color Out of Space.mp3"
-                 ]))
+            scores["The Color Out of Space"] += 70
+            score += 70
+        if self.voc_match(phrase, "innsmouth"):
+            scores["The Shadow Over Innsmouth"] += 70
+            score += 70
+        if self.voc_match(phrase, "mountains_of_madness"):
+            scores["At The Mountains of Madness"] += 70
+            score += 70
 
-        if score >= 0.9:
-            match = CPSMatchLevel.EXACT
-        elif score >= 0.7:
-            match = CPSMatchLevel.ARTIST
-        elif score >= 0.5:
-            match = CPSMatchLevel.CATEGORY
-
-        if match is not None:
-            return (phrase, match, {"stream": url})
+        if score >= CPSMatchConfidence.AVERAGE_LOW:
+            return [
+                {
+                    "match_confidence": min(100, scores[k]),
+                    "media_type": CPSMatchType.AUDIOBOOK,
+                    "uri": self.urls[k],
+                    "playback": CPSPlayback.AUDIO,
+                    "image": self.images[k],
+                    "bg_image": self.default_bg,
+                    "skill_icon": self.skill_icon,
+                    "skill_logo": self.skill_logo,
+                    "title": k,
+                    "author": "H. P. Lovecraft"
+                } for k in scores if scores[k] > 50]
         return None
-
-    def CPS_start(self, phrase, data):
-        self.CPS_play(data["stream"])
 
 
 def create_skill():
