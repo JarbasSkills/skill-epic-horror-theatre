@@ -2,9 +2,11 @@
 
 Radio drama adaptions of H. P. Lovecraft
 
+![](./ui/logo.png)
+
 ## About 
 
-![](./ui/logo.png)
+![](./gui.gif)
 
 This skill brings to you:
 
