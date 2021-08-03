@@ -1,10 +1,10 @@
-from ovos_workshop.skills.common_play import BetterCommonPlaySkill
-from ovos_workshop.frameworks.cps import CPSMatchType, CPSPlayback, \
+from ovos_workshop.skills.common_play import OVOSCommonPlaybackSkill
+from ovos_workshop.frameworks.playback import CPSMatchType, CPSPlayback, \
     CPSMatchConfidence
 from os.path import join, dirname
 
 
-class EpicHorrorTheatreSkill(BetterCommonPlaySkill):
+class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
 
     def __init__(self):
         super().__init__("Epic Horror Theatre")
@@ -31,7 +31,7 @@ class EpicHorrorTheatreSkill(BetterCommonPlaySkill):
 
     def get_intro_message(self):
         self.speak_dialog("intro")
-        self.gui.show_image(self.logo)
+        self.gui.show_image(self.skill_logo)
 
     # common play
     def clean_vocs(self, phrase):
