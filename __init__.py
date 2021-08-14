@@ -1,6 +1,6 @@
 from ovos_workshop.skills.common_play import OVOSCommonPlaybackSkill
-from ovos_workshop.frameworks.playback import CPSMatchType, CPSPlayback, \
-    CPSMatchConfidence
+from ovos_workshop.frameworks.playback import CommonPlayMediaType, CommonPlayPlaybackType, \
+    CommonPlayMatchConfidence
 from os.path import join, dirname
 
 
@@ -21,9 +21,9 @@ class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
             "At The Mountains of Madness": join(dirname(__file__), "ui",
                                                 "mountains.jpg")
         }
-        self.supported_media = [CPSMatchType.GENERIC,
-                                CPSMatchType.AUDIO,
-                                CPSMatchType.AUDIOBOOK]
+        self.supported_media = [CommonPlayMediaType.GENERIC,
+                                CommonPlayMediaType.AUDIO,
+                                CommonPlayMediaType.AUDIOBOOK]
         self.default_bg = join(dirname(__file__), "ui", "bg.jpg")
         self.default_image = join(dirname(__file__), "ui", "logo.png")
         self.skill_logo = join(dirname(__file__), "ui", "icon.png")
@@ -50,15 +50,15 @@ class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
 
         Arguments:
             phrase (str): User phrase uttered after "Play", e.g. "some music"
-            media_type (CPSMatchType): requested CPSMatchType to search for
+            media_type (CommonPlayMediaType): requested CPSMatchType to search for
 
         Returns:
             search_results (list): list of dictionaries with result entries
             {
-                "match_confidence": CPSMatchConfidence.HIGH,
+                "match_confidence": CommonPlayMatchConfidence.HIGH,
                 "media_type":  CPSMatchType.MUSIC,
                 "uri": "https://audioservice.or.gui.will.play.this",
-                "playback": CPSPlayback.GUI,
+                "playback": CommonPlayPlaybackType.GUI,
                 "image": "http://optional.audioservice.jpg",
                 "bg_image": "http://optional.audioservice.background.jpg"
             }
@@ -80,7 +80,7 @@ class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
         if self.voc_match(original, "lovecraft"):
             score += 50
 
-        if media_type == CPSMatchType.AUDIOBOOK:
+        if media_type == CommonPlayMediaType.AUDIOBOOK:
             score += 15
 
         phrase = self.clean_vocs(phrase)
@@ -96,13 +96,13 @@ class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
             scores["At The Mountains of Madness"] += 70
             score += 70
 
-        if score >= CPSMatchConfidence.AVERAGE_LOW:
+        if score >= CommonPlayMatchConfidence.AVERAGE_LOW:
             return [
                 {
                     "match_confidence": min(100, scores[k]),
-                    "media_type": CPSMatchType.AUDIOBOOK,
+                    "media_type": CommonPlayMediaType.AUDIOBOOK,
                     "uri": self.urls[k],
-                    "playback": CPSPlayback.AUDIO,
+                    "playback": CommonPlayPlaybackType.AUDIO,
                     "image": self.images[k],
                     "bg_image": self.default_bg,
                     "skill_icon": self.skill_icon,
