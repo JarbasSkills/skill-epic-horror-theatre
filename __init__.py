@@ -22,7 +22,6 @@ class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
                                                 "mountains.jpg")
         }
         self.supported_media = [CommonPlayMediaType.GENERIC,
-                                CommonPlayMediaType.AUDIO,
                                 CommonPlayMediaType.AUDIOBOOK]
         self.default_bg = join(dirname(__file__), "ui", "bg.jpg")
         self.default_image = join(dirname(__file__), "ui", "logo.png")
