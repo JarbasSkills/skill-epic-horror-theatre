@@ -96,21 +96,19 @@ class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
             score += 70
 
         if score >= CommonPlayMatchConfidence.AVERAGE_LOW:
-            return [
-                {
-                    "match_confidence": min(100, scores[k]),
-                    "media_type": CommonPlayMediaType.AUDIOBOOK,
-                    "uri": self.urls[k],
-                    "playback": CommonPlayPlaybackType.AUDIO,
-                    "image": self.images[k],
-                    "bg_image": self.default_bg,
-                    "skill_icon": self.skill_icon,
-                    "skill_logo": self.skill_logo,
-                    "title": k,
-                    "author": "H. P. Lovecraft"
-                } for k in scores if scores[k] > 50]
-        return None
-
+            for k in scores:
+                yield {
+                        "match_confidence": min(100, scores[k]),
+                        "media_type": CommonPlayMediaType.AUDIOBOOK,
+                        "uri": self.urls[k],
+                        "playback": CommonPlayPlaybackType.AUDIO,
+                        "image": self.images[k],
+                        "bg_image": self.default_bg,
+                        "skill_icon": self.skill_icon,
+                        "skill_logo": self.skill_logo,
+                        "title": k,
+                        "author": "H. P. Lovecraft"
+                    }
 
 def create_skill():
     return EpicHorrorTheatreSkill()
