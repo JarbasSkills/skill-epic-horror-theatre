@@ -1,6 +1,6 @@
 from ovos_workshop.skills.common_play import OVOSCommonPlaybackSkill
-from ovos_workshop.frameworks.playback import CommonPlayMediaType, CommonPlayPlaybackType, \
-    CommonPlayMatchConfidence
+from ovos_plugin_common_play.ocp import MediaType, PlaybackType, \
+    MatchConfidence
 from os.path import join, dirname
 
 
@@ -21,8 +21,8 @@ class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
             "At The Mountains of Madness": join(dirname(__file__), "ui",
                                                 "mountains.jpg")
         }
-        self.supported_media = [CommonPlayMediaType.GENERIC,
-                                CommonPlayMediaType.AUDIOBOOK]
+        self.supported_media = [MediaType.GENERIC,
+                                MediaType.AUDIOBOOK]
         self.default_bg = join(dirname(__file__), "ui", "bg.jpg")
         self.default_image = join(dirname(__file__), "ui", "logo.png")
         self.skill_logo = join(dirname(__file__), "ui", "icon.png")
@@ -49,15 +49,15 @@ class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
 
         Arguments:
             phrase (str): User phrase uttered after "Play", e.g. "some music"
-            media_type (CommonPlayMediaType): requested CPSMatchType to search for
+            media_type (MediaType): requested CPSMatchType to media for
 
         Returns:
             search_results (list): list of dictionaries with result entries
             {
-                "match_confidence": CommonPlayMatchConfidence.HIGH,
+                "match_confidence": MatchConfidence.HIGH,
                 "media_type":  CPSMatchType.MUSIC,
                 "uri": "https://audioservice.or.gui.will.play.this",
-                "playback": CommonPlayPlaybackType.VIDEO,
+                "playback": PlaybackType.VIDEO,
                 "image": "http://optional.audioservice.jpg",
                 "bg_image": "http://optional.audioservice.background.jpg"
             }
@@ -79,7 +79,7 @@ class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
         if self.voc_match(original, "lovecraft"):
             score += 50
 
-        if media_type == CommonPlayMediaType.AUDIOBOOK:
+        if media_type == MediaType.AUDIOBOOK:
             score += 15
 
         phrase = self.clean_vocs(phrase)
@@ -95,13 +95,13 @@ class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
             scores["At The Mountains of Madness"] += 70
             score += 70
 
-        if score >= CommonPlayMatchConfidence.AVERAGE_LOW:
+        if score >= MatchConfidence.AVERAGE_LOW:
             for k in scores:
                 yield {
                         "match_confidence": min(100, scores[k]),
-                        "media_type": CommonPlayMediaType.AUDIOBOOK,
+                        "media_type": MediaType.AUDIOBOOK,
                         "uri": self.urls[k],
-                        "playback": CommonPlayPlaybackType.AUDIO,
+                        "playback": PlaybackType.AUDIO,
                         "image": self.images[k],
                         "bg_image": self.default_bg,
                         "skill_icon": self.skill_icon,
