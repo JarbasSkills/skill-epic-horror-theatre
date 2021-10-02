@@ -1,7 +1,8 @@
-from ovos_workshop.skills.common_play import OVOSCommonPlaybackSkill
-from ovos_plugin_common_play.ocp import MediaType, PlaybackType, \
-    MatchConfidence
 from os.path import join, dirname
+
+from ovos_workshop.skills.common_play import OVOSCommonPlaybackSkill, \
+    MediaType, PlaybackType, \
+    MatchConfidence, ocp_search
 
 
 class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
@@ -43,8 +44,8 @@ class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
         phrase = phrase.strip()
         return phrase
 
-    # better common play
-    def CPS_search(self, phrase, media_type):
+    @ocp_search()
+    def search(self, phrase, media_type):
         """Analyze phrase to see if it is a play-able phrase with this skill.
 
         Arguments:
@@ -98,17 +99,18 @@ class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
         if score >= MatchConfidence.AVERAGE_LOW:
             for k in scores:
                 yield {
-                        "match_confidence": min(100, scores[k]),
-                        "media_type": MediaType.AUDIOBOOK,
-                        "uri": self.urls[k],
-                        "playback": PlaybackType.AUDIO,
-                        "image": self.images[k],
-                        "bg_image": self.default_bg,
-                        "skill_icon": self.skill_icon,
-                        "skill_logo": self.skill_logo,
-                        "title": k,
-                        "author": "H. P. Lovecraft"
-                    }
+                    "match_confidence": min(100, scores[k]),
+                    "media_type": MediaType.AUDIOBOOK,
+                    "uri": self.urls[k],
+                    "playback": PlaybackType.AUDIO,
+                    "image": self.images[k],
+                    "bg_image": self.default_bg,
+                    "skill_icon": self.skill_icon,
+                    "skill_logo": self.skill_logo,
+                    "title": k,
+                    "author": "H. P. Lovecraft"
+                }
+
 
 def create_skill():
     return EpicHorrorTheatreSkill()
