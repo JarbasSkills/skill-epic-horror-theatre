@@ -1,0 +1,23 @@
+{
+    "The Shadow Over Innsmouth": {
+        "uri": "https://github.com/JarbasSkills/skill-epic-horror-theatre/raw/media/media/The%20Shadow%20Over%20Innsmouth.mp3",
+        "image": "ui/innmouth.jpg",
+        "title": "The Shadow Over Innsmouth",
+        "author": "H. P. Lovecraft",
+        "album": "by Atlanta Radio Theatre"
+    },
+    "The Color Out of Space": {
+        "uri": "https://github.com/JarbasSkills/skill-epic-horror-theatre/raw/media/media/The%20Color%20Out%20of%20Space.mp3",
+        "image": "ui/color.jpg",
+        "title": "The Color Out of Space",
+        "author": "H. P. Lovecraft",
+        "album": "by Atlanta Radio Theatre"
+    },
+    "At The Mountains of Madness": {
+        "uri": "https://github.com/JarbasSkills/skill-epic-horror-theatre/raw/media/media/At%20The%20Mountains%20of%20Madness.mp3",
+        "image": "ui/mountains.jpg",
+        "title": "At The Mountains of Madness",
+        "author": "H. P. Lovecraft",
+        "album": "by Atlanta Radio Theatre"
+    }
+}

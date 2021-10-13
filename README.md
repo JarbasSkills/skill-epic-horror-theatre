@@ -18,10 +18,7 @@ This skill brings to you:
 
 ## Examples 
 
-* "read the shadow over innsmouth"
-* "play mountains of madness book"
-* "read the color out of space"
-* "read lovecraft"
+* "play lovecraft radio theatre"
 
 # Platform support
 
