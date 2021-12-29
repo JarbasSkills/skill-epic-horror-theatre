@@ -3,7 +3,7 @@ from os.path import join, dirname
 from json_database import JsonStorage
 from ovos_workshop.skills.common_play import OVOSCommonPlaybackSkill, \
     MediaType, PlaybackType, \
-    MatchConfidence, ocp_search
+    MatchConfidence, ocp_search, ocp_featured_media
 
 
 class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
@@ -52,17 +52,10 @@ class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
 
         return score
 
-    @ocp_search()
-    def ocp_epichorrortheatre_playlist(self, phrase, media_type):
-        score = self.get_base_score(phrase, media_type)
-        if self.voc_match(phrase, "atlanta"):
-            score += 15
-        if self.voc_match(phrase, "audio_theatre") or \
-                media_type == MediaType.RADIO_THEATRE:
-            score += 10
-        pl = [
+    @ocp_featured_media()
+    def featured_media(self):
+        return [
             {
-                "match_confidence": score,
                 "media_type": MediaType.AUDIOBOOK,
                 "uri": entry["uri"],
                 "playback": PlaybackType.AUDIO,
@@ -74,11 +67,20 @@ class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
                 "album": "by Atlanta Radio Theatre"
             } for title, entry in self.db.items()
         ]
-        if pl:
+
+    @ocp_search()
+    def ocp_epichorrortheatre_playlist(self, phrase, media_type):
+        score = self.get_base_score(phrase, media_type)
+        if self.voc_match(phrase, "atlanta"):
+            score += 15
+        if self.voc_match(phrase, "audio_theatre") or \
+                media_type == MediaType.RADIO_THEATRE:
+            score += 10
+        if score >= 50:
             yield {
                 "match_confidence": score,
                 "media_type": MediaType.AUDIOBOOK,
-                "playlist": pl,
+                "playlist": self.featured_media(),
                 "playback": PlaybackType.AUDIO,
                 "skill_icon": self.skill_icon,
                 "image": self.default_bg,
