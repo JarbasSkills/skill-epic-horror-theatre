@@ -1,24 +1,33 @@
 from os.path import join, dirname
 
 from json_database import JsonStorage
-from ovos_workshop.skills.common_play import OVOSCommonPlaybackSkill, \
-    MediaType, PlaybackType, \
-    MatchConfidence, ocp_search
+
+from ovos_utils.ocp import MediaType, PlaybackType
+from ovos_workshop.decorators.ocp import ocp_search
+from ovos_workshop.skills.common_play import OVOSCommonPlaybackSkill
 
 
 class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
-
-    def __init__(self):
-        super().__init__("Epic Horror Theatre")
+    def __init__(self, *args, **kwargs):
         self.db = JsonStorage(join(dirname(__file__),
                                    "res", "epichorrortheatre.json"))
-        self.supported_media = [MediaType.GENERIC,
-                                MediaType.RADIO_THEATRE,
+        self.supported_media = [MediaType.RADIO_THEATRE,
                                 MediaType.AUDIOBOOK]
         self.default_bg = join(dirname(__file__), "ui", "bg.jpg")
         self.skill_icon = join(dirname(__file__), "ui", "icon.png")
+        super().__init__(*args, **kwargs)
 
-    # common play
+        self.register_ocp_keyword(MediaType.AUDIOBOOK,
+                                  "book_name", list(self.db.keys()))
+        self.register_ocp_keyword(MediaType.AUDIOBOOK,
+                                  "book_author", ["Lovecraft", "H. P. Lovecraft"])
+        self.register_ocp_keyword(MediaType.RADIO_THEATRE,
+                                  "radio_drama_director",
+                                  ["Atlanta Radio Theatre"])
+        self.register_ocp_keyword(MediaType.RADIO_THEATRE,
+                                  "radio_drama_streaming_provider",
+                                  ["EpicHorrorTheatre", "Epic Horror Theatre"])
+
     def clean_vocs(self, phrase):
         phrase = self.remove_voc(phrase, "reading")
         phrase = self.remove_voc(phrase, "lovecraft")
@@ -102,7 +111,7 @@ class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
         elif media_type not in [MediaType.RADIO_THEATRE, MediaType.AUDIOBOOK]:
             return
 
-        if score >= MatchConfidence.AVERAGE:
+        if score >= 50:
             for k in scores:
                 yield {
                     "match_confidence": min(100, scores[k]),
@@ -116,7 +125,3 @@ class EpicHorrorTheatreSkill(OVOSCommonPlaybackSkill):
                     "author": "H. P. Lovecraft",
                     "album": "by Atlanta Radio Theatre"
                 }
-
-
-def create_skill():
-    return EpicHorrorTheatreSkill()
